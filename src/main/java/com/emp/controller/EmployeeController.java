@@ -18,6 +18,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
@@ -35,7 +38,7 @@ public class EmployeeController {
     @Autowired
     private RefreshTokenService refreshTokenService;
 
-    //http://localhost:9090/api/employees/registration
+    //http://localhost:8080/api/employees/registration
     @PostMapping("/registration")
     public ResponseEntity<EmployeeDTO> employeeRegistration(
 //            @Valid
@@ -44,7 +47,7 @@ public class EmployeeController {
         return ResponseEntity.ok(savedEmployee);
     }
 
-    //http://localhost:9090/api/employees/login
+    //http://localhost:8080/api/employees/login
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
         try {
@@ -65,6 +68,7 @@ public class EmployeeController {
         return ResponseEntity.ok(new JwtResponse("JWT Token",token,refreshToken.getToken()));
     }
 
+    //http://localhost:8080/api/employees/refreshToken
     @PostMapping("/refreshToken")
     public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenDto token) {
         return refreshTokenService.findByToken(token.getToken())
@@ -76,6 +80,51 @@ public class EmployeeController {
                 }).orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
     }
 
+    //http://localhost:8080/api/employees/getAllEmployees
+    @GetMapping("/getAllEmployees")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployeesDetails(){
+        try{
+            List<EmployeeDTO> allEmplDetails = employeeService.getAllEmplDetails();
+            return ResponseEntity.ok(allEmplDetails);
+        }catch (Exception e){
+            return ResponseEntity.status(404).build();
+//            throw new RuntimeException("Employee object is not found!");
+        }
+    }
+
+    //delete the object
+    //http://localhost:8080/api/employees/deleteEmployeeDetail/{empId}
+    @DeleteMapping("/deleteEmployeeDetail/{empId}")
+    public ResponseEntity<String> deleteEmployeeDetail(
+            @PathVariable String empId
+    ){
+        try{
+            if(empId != null){
+                String deleteStatus = employeeService.deleteEmployeeDetailById(empId);
+                return ResponseEntity.ok(deleteStatus);
+            }
+            return ResponseEntity.status(404).body("Employee not found with given ID");
+        }catch (Exception e){
+            return ResponseEntity.status(404).body("Employee not found with given ID");
+
+        }
+    }
+
+    //update the filed using patch
+    //http://localhost:8080/api/employees/employeeUpdate/{id}
+    @PatchMapping("/employeeUpdate/{id}")
+    public ResponseEntity<EmployeeDTO> updateEmployee(
+            @PathVariable String id,
+            @RequestBody Map<String, Object> updates) {
+        try{
+            EmployeeDTO updatedEmployee = employeeService.updateEmployeeFields(id, updates);
+            return ResponseEntity.ok(updatedEmployee);
+        }catch (Exception e){
+            throw new RuntimeException("Employee not found with given ID");
+        }
+    }
+
+    //http://localhost:8080/api/employees/message
     @GetMapping("/message")
     public String getSecretMessage() {
         return "🎉 Welcome! This is a secured message only for authenticated users.";

@@ -12,7 +12,6 @@ target/
 .settings
 .springBeans
 .sts4-cache
-.properties
 
 ### IntelliJ IDEA ###
 .idea
@@ -32,3 +31,21 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore Spring Boot config files
+application.properties
+application.yml
+
+# Ignore environment files
+.env
+*.env
+
+# Ignore IDE and build files
+/target
+/.idea
+/.vscode
+*.iml
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db

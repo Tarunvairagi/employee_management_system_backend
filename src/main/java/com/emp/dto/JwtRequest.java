@@ -1,0 +1,9 @@
+package com.emp.dto;
+
+import lombok.Data;
+
+@Data
+public class JwtRequest {
+    private String email;
+    private String password;
+}

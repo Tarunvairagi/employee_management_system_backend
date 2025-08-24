@@ -30,7 +30,8 @@ public class SecurityConfig {
 
     private static final String[] PUBLIC_ENDPOINTS = {
             "/api/employees/registration",
-            "/api/employees/login"
+            "/api/employees/login",
+            "/api/employees/refreshToken"
     };
 
     @Bean

@@ -11,9 +11,7 @@ import java.util.Date;
 @Component
 public class JWTService {
     private static final String SECRET_KEY = "my-super-secret-key";
-    private static final long EXPIRATION_TIME = 1000 * 60;
-    // 86400000  -> 24 hours
-    // 1000*60*3 -> 3 minutes
+    private static final long EXPIRATION_TIME = 86400000;
 
     //Generating the token
     public String generateToken(String username){

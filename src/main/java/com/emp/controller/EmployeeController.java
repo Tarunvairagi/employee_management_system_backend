@@ -3,12 +3,9 @@ package com.emp.controller;
 import com.emp.dto.EmployeeDTO;
 import com.emp.dto.JwtRequest;
 import com.emp.dto.JwtResponse;
-import com.emp.dto.RefreshTokenDto;
-import com.emp.model.RefreshToken;
 import com.emp.service.CustomUserDetailsService;
 import com.emp.service.EmployeeService;
 import com.emp.service.JWTService;
-import com.emp.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +29,6 @@ public class EmployeeController {
     private final CustomUserDetailsService userDetailsService;
     @Autowired
     private final EmployeeService employeeService;
-    @Autowired
-    private RefreshTokenService refreshTokenService;
 
     //http://localhost:9090/api/employees/registration
     @PostMapping("/registration")
@@ -61,19 +56,7 @@ public class EmployeeController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String token = jwtService.generateToken(userDetails.getUsername());
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
-        return ResponseEntity.ok(new JwtResponse("JWT Token",token,refreshToken.getToken()));
-    }
-
-    @PostMapping("/refreshToken")
-    public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenDto token) {
-        return refreshTokenService.findByToken(token.getToken())
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getEmployeeDetails)
-                .map(employeeDetails -> {
-                    String accessToken = jwtService.generateToken(employeeDetails.getEmail());
-                    return ResponseEntity.ok(new JwtResponse("JWT Token", accessToken, token.getToken()));
-                }).orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
+        return ResponseEntity.ok(new JwtResponse("JWT Token",token));
     }
 
     @GetMapping("/message")

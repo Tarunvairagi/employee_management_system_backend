@@ -2,12 +2,11 @@ package com.emp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class JwtResponse {
-    private String type;
-    private String accessToken;
+@NoArgsConstructor
+public class RefreshTokenDto {
     private String token;
-
 }
